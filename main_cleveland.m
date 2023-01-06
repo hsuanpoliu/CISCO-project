@@ -144,9 +144,9 @@ end
 sp = 2;
 
 legendInfo{1} = ['Centralized'];
-legendInfo{2} = ['$\sigma=5\times 10^4$'];
-legendInfo{3} = ['$\sigma=1.8\times 10^5$'];
-legendInfo{4} = ['$\sigma=3\times 10^5$'];
+legendInfo{2} = ['$\sigma=1.1\times 10^5$'];
+legendInfo{3} = ['$\sigma=2.4\times 10^5$'];
+legendInfo{4} = ['$\sigma=3.5\times 10^5$'];
 
 figure(1)
 plot(0:sp:J-1,acc_train_plot_all(1,1:sp:end),'s--','color',[0.6350 0.0780 0.1840],'linewidth',2,'markersize',12)

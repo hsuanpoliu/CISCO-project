@@ -2,8 +2,8 @@ clc
 clear
 close all
 %% load dataset
-X_train = readmatrix("X_train.csv")/255;
-Y_train_original = readmatrix("Y_train.csv");
+X_train = readmatrix("MNIST_X_train.csv")/255;
+Y_train_original = readmatrix("MNIST_Y_train.csv");
 Y_train = ((Y_train_original > 3));
 n_col = length(X_train(1,:));
 
@@ -141,6 +141,7 @@ for p = 1:length(sigma_n)
     acc_train_plot_all(p+1,:) = movmean(sum(acc_train_total,1)/Trial,1);
 end
 
+%% Plot
 sp = 2;
 
 legendInfo{1} = ['Centralized'];
