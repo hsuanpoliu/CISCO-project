@@ -8,28 +8,32 @@ Y_train = ((Y_train_original > 3));
 n_col = length(X_train(1,:));
 
 %% spliting dataset to the parties and settings
-sigma_n = [5*10^4,1.8*10^5,3*10^5];
-J = 21;
-Trial_cen = 20;
-Trial = 30;
+sigma_n = [5*10^4,1.8*10^5,3*10^5]; % Chosen sigmas
+J = 21; % Number of iterations
+Trial_cen = 20; % Number of the centralized training
+Trial = 30; % Number of the decentralized training
 
-num_parties = 2;
-lr_cen = 0.01;
-lr_dist = [0.0005,10^(-9),10^(-12)*ones(1,2),10^(-13)*ones(1,5),10^(-15)*ones(1,12)]; 
-T = num_parties-1;
-t = 10^6;
-B = 100;
-len_train = length(X_train(:,1))/num_parties;
+num_parties = 2; % N
+lr_cen = 0.01; % Learning rate for the centralized training
+lr_dist = [0.0005,10^(-9),10^(-12)*ones(1,2),10^(-13)*ones(1,5),10^(-15)*ones(1,12)]; % Learning rate for the decentralized training
+T = num_parties-1; % Number of colluding clients
+t = 10^6; % Truncation parameter
+B = 100; % Batch size
+len_train = length(X_train(:,1))/num_parties; % Number of datapoints
 
+%% Public parameters for each client
 w_temp = exp(2*1i*pi/num_parties);
 w = (w_temp.^(0:(num_parties-1))');
 
+%% Distribute the dataset to all clients
 X_ind = zeros(len_train,length(X_train(1,:)),num_parties);
 Y_ind = zeros(len_train,1,num_parties);
 for m = 1:num_parties
     X_ind(:,:,m) = X_train((len_train*(m-1)+1):((len_train)*m),:);
     Y_ind(:,:,m) = Y_train((len_train*(m-1)+1):((len_train)*m),:);
 end
+
+%% Storage for accuracy
 acc_train_plot_all = zeros(length(sigma_n),J);
 acc_valid_plot_all = zeros(length(sigma_n),J);
 acc_train = zeros(1,J);
@@ -74,11 +78,8 @@ for p = 1:length(sigma_n)
             X_ind(:,:,m) = X_train((len_train*(m-1)+1):((len_train)*m),:);
             Y_ind(:,:,m) = Y_train((len_train*(m-1)+1):((len_train)*m),:);
         end
-
         weight_initial = randn(n_col,1);
         w_t_ss = secretshare_parameter(weight_initial,w,T,num_parties,sigma_n(p),t);
-
-        
 
         for iter = 1:J
             X_ind_B = zeros(B,size(X_ind,2),num_parties);
@@ -142,12 +143,11 @@ for p = 1:length(sigma_n)
 end
 
 %% Plot
-sp = 2;
-
 legendInfo{1} = ['Centralized'];
 legendInfo{2} = ['$\sigma=5\times 10^4$'];
 legendInfo{3} = ['$\sigma=1.8\times 10^5$'];
 legendInfo{4} = ['$\sigma=3\times 10^5$'];
+sp = 2;
 
 figure(1)
 plot(0:sp:J-1,acc_train_plot_all(1,1:sp:end),'s--','color',[0.6350 0.0780 0.1840],'linewidth',2,'markersize',12)
